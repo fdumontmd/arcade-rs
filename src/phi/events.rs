@@ -6,7 +6,7 @@ macro_rules! struct_events {
         keyboard: { $( $k_alias:ident : $k_sdl:ident),* $(,)* },
         else: { $( $e_alias:ident : $e_sdl:pat ),*  $(,)* }
     ) => {
-        use self::sdl2::EventPump;
+        use sdl2::EventPump;
 
         pub struct ImmediateEvents {
             $( pub $k_alias: Option<bool>,  )*
