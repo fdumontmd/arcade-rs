@@ -2,9 +2,10 @@
 extern crate error_chain;
 extern crate sdl2;
 
+mod events;
+
+use events::Events;
 use sdl2::pixels::Color;
-use std::thread;
-use std::time::Duration;
 
 error_chain! {
     foreign_links {
@@ -25,13 +26,19 @@ fn run() -> Result<()> {
         .accelerated()
         .build().map_err(|e| Error::with_chain(e, "cannot get canvas"))?;
 
-    canvas.set_draw_color(Color::RGB(0, 0, 0));
-    canvas.clear();
-    canvas.present();
+    let mut events = Events::new(sdl_context.event_pump()?);
 
-    sdl_context.event_pump()?.pump_events();
+    loop {
+        events.pump();
 
-    thread::sleep(Duration::from_millis(3000));
+        if events.quit || events.key_escape {
+            break;
+        }
+
+        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.clear();
+        canvas.present();
+    }
 
     Ok(())
 }
